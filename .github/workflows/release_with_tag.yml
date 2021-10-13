@@ -1,0 +1,172 @@
+name: Release with Tag
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+
+  ## ======================================================================================================
+  release:
+    name: Write Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get Tagname
+        id: tag_name
+        run: |
+          echo ::set-output name=current_version::${GITHUB_REF#refs/tags/v}
+        shell: bash
+
+      - name: Changelog Reader
+        id: changelog_reader
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          version: ${{ steps.tag_name.outputs.current_version }}
+          path: ./CHANGELOG.md
+
+      - name: Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ github.ref }}
+          tag_name: ${{ github.ref }}
+          body: ${{ steps.changelog_reader.outputs.changes }}
+
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+
+  ## ======================================================================================================
+  upload_asset_windows:
+    needs: release
+    name: Upload Asset on Windows
+    runs-on: windows-2019
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.3
+        with:
+            vs-version: '[16.11, 16.12)'
+
+      - name: Run Buildscript
+        run: ./build-on-windows.bat
+
+      # - name: Print MD5
+      #   run: 
+
+      - name: Install packages
+        run: choco install 7zip.portable
+
+      - name: Run Zip
+        run: 7z a -r lib.zip libsodium/bin
+
+      - name: Upload Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ./lib.zip
+          asset_name: windows.zip
+          asset_content_type: application/octet-stream
+
+  ## ======================================================================================================
+  upload_asset_linux:
+    needs: release
+    name: Upload Asset on Linux
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run Buildscript
+        run: sh ./build-on-linux.sh
+
+      # - name: Print MD5
+      #   run: 
+
+      - name: Run Zip
+        run: zip -r lib.zip libsodium/.libs/*
+
+      - name: Upload Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ./lib.zip
+          asset_name: linux.zip
+          asset_content_type: application/octet-stream
+
+  ## ======================================================================================================
+  upload_asset_android:
+    needs: release
+    name: Upload Asset on Linux (Android)
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1.0.6
+        with:
+          ndk-version: r21e
+
+      - name: Run Buildscript
+        run: sh ./build-on-linux-android.sh
+
+      # - name: Print MD5
+      #   run: 
+
+      - name: Run Zip
+        run: zip -r lib.zip output/*
+
+      - name: Upload Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ./lib.zip
+          asset_name: android.zip
+          asset_content_type: application/octet-stream
+
+  ## ======================================================================================================
+  upload_asset_macos:
+    needs: release
+    name: Upload Asset on macOS (+ iOS)
+    runs-on: macos-10.15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Dependency
+        run: brew install coreutils automake
+
+      - name: Run Buildscript
+        run: sh ./build-on-mac-ios.sh
+
+      # - name: Print MD5
+      #   run: 
+
+      - name: Run Zip
+        run: zip -r lib.zip output/*
+
+      - name: Upload Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ./lib.zip
+          asset_name: macos_ios.zip
+          asset_content_type: application/octet-stream
