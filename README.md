@@ -25,3 +25,7 @@
 ## Preface
 
 - I don't have macOS device then couldn't suppport issues which related. To reduce issues, bothering, doubting transparency about from that, so I choose to use [github's action](https://docs.github.com/en/actions).
+
+## Ref
+
+- <https://download.libsodium.org/libsodium/releases/>

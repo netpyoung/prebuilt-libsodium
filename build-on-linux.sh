@@ -1,6 +1,26 @@
 #!/usr/bin/env bash
 set -e
 
+# [for Docker environment]
+# RUN apt-get update && \
+#     apt-get -y install \
+#     git \
+#     curl \
+#     wget \
+#     python \
+#     build-essential \
+#     autotools-dev \
+#     autoconf \
+#     automake \
+#     autogen \
+#     gettext-base \
+#     gettext \
+#     binutils \
+#     libtool \
+#     unzip && \
+#     apt-get clean && \
+#     rm -rf /var/lib/apt/lists/*
+
 # [variable]
 
 # [src] libsodium
