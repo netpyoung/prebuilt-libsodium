@@ -29,3 +29,4 @@
 ## Ref
 
 - <https://download.libsodium.org/libsodium/releases/>
+- <https://github.com/CareBoo/unity-libsodium>
