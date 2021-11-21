@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+export LIBSODIUM_FULL_BUILD=true
 
 readonly IOS_MIN_VERSION=6.0
 

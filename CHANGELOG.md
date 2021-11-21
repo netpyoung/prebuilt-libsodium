@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.0.2]
+
+- libsodium version 1.0.18
+- export LIBSODIUM_FULL_BUILD=true
+
 ## [0.0.1]
 
 - libsodium version 1.0.18

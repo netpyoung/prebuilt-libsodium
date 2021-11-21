@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+export LIBSODIUM_FULL_BUILD=true
 
 # [for Docker environment]
 # RUN apt-get update && \
