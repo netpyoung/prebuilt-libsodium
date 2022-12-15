@@ -43,6 +43,10 @@ cp $DIR_LIBSODIUM/libsodium-ios/lib/libsodium.a $DIR_DEST/Plugins/iOS/libsodium.
 
 
 git clean -Xdf
+
+# replace osx.sh with modified_osx.sh
+cp $ROOT/modified_osx.sh $DIR_LIBSODIUM/dist-build/osx.sh
+
 ./autogen.sh
 ./dist-build/osx.sh
 mkdir -p $DIR_DEST/Plugins/x64
