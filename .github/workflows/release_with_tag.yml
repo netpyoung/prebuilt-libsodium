@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Get Tagname
         id: tag_name
@@ -50,7 +50,7 @@ jobs:
     runs-on: windows-2019
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.3
@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Run Buildscript
         run: sh ./build-on-linux.sh
@@ -114,12 +114,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Android NDK
-        uses: nttld/setup-ndk@v1.0.6
+        uses: nttld/setup-ndk@v1.2.0
         with:
-          ndk-version: r21e
+          ndk-version: r25
 
       - name: Run Buildscript
         run: sh ./build-on-linux-android.sh
@@ -144,10 +144,10 @@ jobs:
   upload_asset_macos:
     needs: release
     name: Upload Asset on macOS (+ iOS)
-    runs-on: macos-10.15
+    runs-on: macos-11
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Dependency
         run: brew install coreutils automake

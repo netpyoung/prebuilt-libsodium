@@ -7,6 +7,7 @@ ROOT=$(pwd)
 DIR_DEST=${ROOT}/output
 DIR_LIBSODIUM=${ROOT}/libsodium
 
+export NDK_PLATFORM="android-19" # FOR PREVENT: 16 is less than minimum platform for arm (19)
 
 # [src] libsodium
 git clone -b 1.0.18 --depth 1 https://github.com/jedisct1/libsodium.git $DIR_LIBSODIUM

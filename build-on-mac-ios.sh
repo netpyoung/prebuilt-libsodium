@@ -51,3 +51,6 @@ cp $ROOT/modified_osx.sh $DIR_LIBSODIUM/dist-build/osx.sh
 ./dist-build/osx.sh
 mkdir -p $DIR_DEST/Plugins/x64
 cp $DIR_LIBSODIUM/libsodium-osx/lib/libsodium.*.dylib $DIR_DEST/Plugins/x64/sodium.bundle
+
+echo "lipo -info $DIR_LIBSODIUM/libsodium-osx/lib/libsodium.*.dylib"
+lipo -info $DIR_LIBSODIUM/libsodium-osx/lib/libsodium.*.dylib
