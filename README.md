@@ -1,6 +1,6 @@
 # prebuilt-libsodium
 
-:package: Prebuilt native libsodium for Unity3D
+:package: Prebuilt native [libsodium](https://github.com/jedisct1/libsodium) for Unity3D
 
 - Prebuilt native libwebp library for Unity3D.
 - try [unity.libsodium](https://github.com/netpyoung/unity.libsodium).
