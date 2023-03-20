@@ -50,7 +50,7 @@ jobs:
   upload_asset_windows:
     needs: release
     name: Upload Asset on Windows
-    runs-on: windows-2019
+    runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -86,7 +86,7 @@ jobs:
   upload_asset_linux:
     needs: release
     name: Upload Asset on Linux
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -114,7 +114,7 @@ jobs:
   upload_asset_android:
     needs: release
     name: Upload Asset on Linux (Android)
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -147,7 +147,7 @@ jobs:
   upload_asset_macos:
     needs: release
     name: Upload Asset on macOS (+ iOS)
-    runs-on: macos-11
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
