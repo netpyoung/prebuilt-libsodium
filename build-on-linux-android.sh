@@ -44,8 +44,8 @@ git clean -Xdf
 ./autogen.sh
 ./dist-build/android-armv8-a.sh
 mkdir -p $DIR_DEST/Plugins/Android/libs/armeabi-v8a
-ls -al $DIR_LIBSODIUM/libsodium-android-armv8-a/lib
-mv $DIR_LIBSODIUM/libsodium-android-armv8-a/lib/libsodium.a $DIR_LIBSODIUM/libsodium-android-armv8-a/lib/libsodium.so $DIR_DEST/Plugins/Android/libs/armeabi-v8a
+ls -al $DIR_LIBSODIUM/libsodium-android-armv8-a+crypto/lib
+mv $DIR_LIBSODIUM/libsodium-android-armv8-a+crypto/lib/libsodium.a $DIR_LIBSODIUM/libsodium-android-armv8-a+crypto/lib/libsodium.so $DIR_DEST/Plugins/Android/libs/armeabi-v8a
 
 
 echo "================================== x86"
