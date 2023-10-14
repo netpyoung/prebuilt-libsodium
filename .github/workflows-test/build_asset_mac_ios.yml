@@ -4,14 +4,19 @@ on: [push]
 
 jobs:
   build_asset_mac:
-    name: Build asset on macOS (+ iOS)
-    runs-on: macos-10.15
+    name: Upload Asset on macOS (xcframework)
+    # runs-on: macos-latest
+    runs-on: macos-13
     steps:
+      - name: Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.0'
       - name: Checkout
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v3
       - name: Install Dependency
         run: brew install coreutils automake
 
       - name: Run Buildscript
         run: sh ./build-on-mac-ios.sh
+
