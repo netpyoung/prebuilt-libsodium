@@ -25,7 +25,7 @@ export LIBSODIUM_FULL_BUILD=true
 # [variable]
 
 # [src] libsodium
-git clone -b 1.0.18 --depth 1 https://github.com/jedisct1/libsodium.git && cd libsodium
+git clone -b 1.0.19 --depth 1 https://github.com/jedisct1/libsodium.git && cd libsodium
 
 # configure
 libtoolize --force
