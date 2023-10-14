@@ -36,7 +36,15 @@ cp $ROOT/modified_macos.sh $DIR_LIBSODIUM/dist-build/macos.sh
 ./autogen.sh
 ./dist-build/macos.sh
 mkdir -p $DIR_DEST/Plugins/x64
-cp $DIR_LIBSODIUM/libsodium-osx/lib/libsodium.*.dylib $DIR_DEST/Plugins/x64/sodium.bundle
 
-echo "lipo -info $DIR_LIBSODIUM/libsodium-osx/lib/libsodium.*.dylib"
-lipo -info $DIR_LIBSODIUM/libsodium-osx/lib/libsodium.*.dylib
+PATH_LIBSODIUM=`realpath $DIR_LIBSODIUM/libsodium-osx/lib/libsodium.dylib`
+otool -L $PATH_LIBSODIUM
+install_name_tool -id @loader_path/sodium.bundle $PATH_LIBSODIUM
+
+cp $PATH_LIBSODIUM $DIR_DEST/Plugins/x64/sodium.bundle
+
+echo "lipo -info $PATH_LIBSODIUM"
+lipo -info $PATH_LIBSODIUM
+
+echo "otool -L $PATH_LIBSODIUM"
+otool -L $PATH_LIBSODIUM
