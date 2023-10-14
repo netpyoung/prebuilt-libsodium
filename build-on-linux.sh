@@ -2,6 +2,11 @@
 set -e
 export LIBSODIUM_FULL_BUILD=true
 
+# [variable]
+ROOT=$(pwd)
+DIR_DEST=${ROOT}/output
+DIR_LIBSODIUM=${ROOT}/libsodium
+
 # [for Docker environment]
 # RUN apt-get update && \
 #     apt-get -y install \
@@ -38,3 +43,6 @@ chmod +x ./configure
 # compile
 mkdir .libs/
 ./configure --prefix=`pwd`/.libs/ && make && make install
+
+mkdir -p $DIR_DEST/Plugins/linux
+cp -r .libs/lib/* $DIR_DEST/Plugins/linux/

@@ -98,7 +98,7 @@ jobs:
       #   run: 
 
       - name: Run Zip
-        run: zip -r lib.zip libsodium/.libs/*
+        run: zip -r lib.zip output/*
 
       - name: Upload Asset
         uses: actions/upload-release-asset@v1
