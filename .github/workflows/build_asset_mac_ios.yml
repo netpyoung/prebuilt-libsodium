@@ -5,7 +5,8 @@ on: [push]
 jobs:
   build_asset_mac:
     name: Upload Asset on macOS (xcframework)
-    runs-on: macos-latest
+    # runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - name: Xcode
         uses: maxim-lobanov/setup-xcode@v1
