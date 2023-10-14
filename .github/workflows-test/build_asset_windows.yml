@@ -5,15 +5,16 @@ on: [push]
 jobs:
   build_asset_windows:
     name: Build asset on Windows
-    runs-on: windows-2019
+    runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.0.3
+        uses: microsoft/setup-msbuild@v1.1
         with:
-            vs-version: '[16.11, 16.12)'
+            vs-version: 17.0
+            # vs-version: '[16.11, 16.12)'
 
       - name: Run Buildscript
         run: ./build-on-windows.bat
