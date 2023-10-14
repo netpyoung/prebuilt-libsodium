@@ -29,28 +29,12 @@ DIR_LIBSODIUM=${ROOT}/libsodium
 
 
 # [src] libsodium
-git clone -b 1.0.18 --depth 1 https://github.com/jedisct1/libsodium.git $DIR_LIBSODIUM && cd $DIR_LIBSODIUM
-
-# configure
-./autogen.sh
+git clone -b 1.0.19 --depth 1 https://github.com/jedisct1/libsodium.git $DIR_LIBSODIUM && cd $DIR_LIBSODIUM
 
 # [generate]
-git clean -Xdf
-./autogen.sh
-./dist-build/ios.sh
+## generate for ios
+./autogen.sh -s
+./dist-build/apple-xcframework.sh
 mkdir -p $DIR_DEST/Plugins/iOS
-cp $DIR_LIBSODIUM/libsodium-ios/lib/libsodium.a $DIR_DEST/Plugins/iOS/libsodium.a
+cp $DIR_LIBSODIUM/libsodium-apple/Clibsodium.xcframework $DIR_DEST/Plugins/iOS/Clibsodium.xcframework
 
-
-git clean -Xdf
-
-# replace osx.sh with modified_osx.sh
-cp $ROOT/modified_osx.sh $DIR_LIBSODIUM/dist-build/osx.sh
-
-./autogen.sh
-./dist-build/osx.sh
-mkdir -p $DIR_DEST/Plugins/x64
-cp $DIR_LIBSODIUM/libsodium-osx/lib/libsodium.*.dylib $DIR_DEST/Plugins/x64/sodium.bundle
-
-echo "lipo -info $DIR_LIBSODIUM/libsodium-osx/lib/libsodium.*.dylib"
-lipo -info $DIR_LIBSODIUM/libsodium-osx/lib/libsodium.*.dylib
