@@ -36,5 +36,5 @@ git clone -b 1.0.19 --depth 1 https://github.com/jedisct1/libsodium.git $DIR_LIB
 ./autogen.sh -s
 ./dist-build/apple-xcframework.sh
 mkdir -p $DIR_DEST/Plugins/iOS
-cp $DIR_LIBSODIUM/libsodium-apple/Clibsodium.xcframework $DIR_DEST/Plugins/iOS/Clibsodium.xcframework
+cp -r $DIR_LIBSODIUM/libsodium-apple/Clibsodium.xcframework $DIR_DEST/Plugins/iOS/Clibsodium.xcframework
 
