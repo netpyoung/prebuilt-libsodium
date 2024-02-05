@@ -29,17 +29,16 @@ jobs:
         run: choco install 7zip.portable
 
       - name: Run Zip
-        run: 7z a -r lib.zip libsodium/bin
+        run: 7z a -r windows.zip libsodium/bin
 
-      - name: Upload Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 🎁⏫ Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: ./lib.zip
-          asset_name: windows.zip
-          asset_content_type: application/octet-stream
+          name: artifact-windows
+          path: windows.zip
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
 
   ## ======================================================================================================
   upload_asset_linux:
@@ -56,17 +55,16 @@ jobs:
       #   run: 
 
       - name: Run Zip
-        run: zip -r lib.zip output/*
+        run: zip -r linux.zip output/*
 
-      - name: Upload Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 🎁⏫ Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: ./lib.zip
-          asset_name: linux.zip
-          asset_content_type: application/octet-stream
+          name: artifact-linux
+          path: linux.zip
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
 
   ## ======================================================================================================
   upload_asset_android:
@@ -89,17 +87,17 @@ jobs:
       #   run: 
 
       - name: Run Zip
-        run: zip -r lib.zip output/*
+        run: zip -r android.zip output/*
 
-      - name: Upload Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 🎁⏫ Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: ./lib.zip
-          asset_name: android.zip
-          asset_content_type: application/octet-stream
+          name: artifact-android
+          path: android.zip
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
 
   ## ======================================================================================================
   upload_asset_macos:
@@ -119,17 +117,16 @@ jobs:
       #   run: 
 
       - name: Run Zip
-        run: zip -r lib.zip output/*
+        run: zip -r macos.zip output/*
 
-      - name: Upload Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 🎁⏫ Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: ./lib.zip
-          asset_name: macos.zip
-          asset_content_type: application/octet-stream
+          name: artifact-macos
+          path: macos.zip
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
 
   upload_asset_apple_xcframework:
     name: Upload Asset on macOS (xcframework)
@@ -152,17 +149,16 @@ jobs:
       #   run: 
 
       - name: Run Zip
-        run: zip -r lib.zip output/*
+        run: zip -r apple-xcframework.zip output/*
 
-      - name: Upload Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 🎁⏫ Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: ./lib.zip
-          asset_name: xcframework.zip
-          asset_content_type: application/octet-stream
+          name: artifact-apple-xcframework
+          path: apple-xcframework.zip
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
 
   ## ======================================================================================================
   release:
