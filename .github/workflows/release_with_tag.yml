@@ -68,7 +68,6 @@ jobs:
 
   ## ======================================================================================================
   upload_asset_android:
-    needs: release
     name: Upload Asset on Linux (Android)
     runs-on: ubuntu-latest
     steps:
@@ -162,7 +161,7 @@ jobs:
 
   ## ======================================================================================================
   release:
-    needs: [upload_asset_windows, upload_asset_linux, upload_asset_macos, upload_asset_apple_xcframework]
+    needs: [upload_asset_windows, upload_asset_linux, upload_asset_android, upload_asset_macos, upload_asset_apple_xcframework]
     name: Write Release
     runs-on: ubuntu-latest
     steps:
@@ -214,6 +213,7 @@ jobs:
           fail_on_unmatched_files: true
           files: |
             ./download-artifacts/artifact-linux/linux.zip
+            ./download-artifacts/artifact-android/android.zip
             ./download-artifacts/artifact-windows/windows.zip
             ./download-artifacts/artifact-macos/macos.zip
             ./download-artifacts/artifact-apple-xcframework/apple-xcframework.zip
