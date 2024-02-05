@@ -13,7 +13,7 @@ jobs:
         with:
           xcode-version: '15.0'
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Dependency
         run: brew install coreutils automake
 

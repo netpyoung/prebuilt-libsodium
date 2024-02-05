@@ -6,15 +6,186 @@ on:
       - '*'
 
 jobs:
+  ## ======================================================================================================
+  upload_asset_windows:
+    name: Upload Asset on Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        with:
+            vs-version: 17
+
+      - name: Run Buildscript
+        run: ./build-on-windows.bat
+
+      # - name: Print MD5
+      #   run: 
+
+      - name: Install packages
+        run: choco install 7zip.portable
+
+      - name: Run Zip
+        run: 7z a -r windows.zip libsodium/bin
+
+      - name: 🎁⏫ Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-windows
+          path: windows.zip
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+  ## ======================================================================================================
+  upload_asset_linux:
+    name: Upload Asset on Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Buildscript
+        run: sh ./build-on-linux.sh
+
+      # - name: Print MD5
+      #   run: 
+
+      - name: Run Zip
+        run: zip -r linux.zip output/*
+
+      - name: 🎁⏫ Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-linux
+          path: linux.zip
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+  ## ======================================================================================================
+  upload_asset_android:
+    name: Upload Asset on Linux (Android)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r25c
+
+      - name: Run Buildscript
+        run: sh ./build-on-linux-android.sh
+
+      # - name: Print MD5
+      #   run: 
+
+      - name: Run Zip
+        run: zip -r android.zip output/*
+
+      - name: 🎁⏫ Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-android
+          path: android.zip
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+
+  ## ======================================================================================================
+  upload_asset_macos:
+    name: Upload Asset on macOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Dependency
+        run: brew install coreutils automake
+
+      - name: Run Buildscript
+        run: sh ./build-on-mac.sh
+
+      # - name: Print MD5
+      #   run: 
+
+      - name: Run Zip
+        run: zip -r macos.zip output/*
+
+      - name: 🎁⏫ Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-macos
+          path: macos.zip
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+  upload_asset_apple_xcframework:
+    name: Upload Asset on macOS (xcframework)
+    # runs-on: macos-latest
+    runs-on: macos-13
+    steps:
+      - name: Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.0'
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Dependency
+        run: brew install coreutils automake
+
+      - name: Run Buildscript
+        run: sh ./build-on-mac-ios.sh
+
+      # - name: Print MD5
+      #   run: 
+
+      - name: Run Zip
+        run: zip -r apple-xcframework.zip output/*
+
+      - name: 🎁⏫ Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-apple-xcframework
+          path: apple-xcframework.zip
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
 
   ## ======================================================================================================
   release:
+    needs: [upload_asset_windows, upload_asset_linux, upload_asset_android, upload_asset_macos, upload_asset_apple_xcframework]
     name: Write Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            CHANGELOG.md
 
+      - name: Make Directory For Download Artifacts
+        run: |
+          mkdir -p download-artifacts
+
+      - name: 🎁⏬ Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          path: download-artifacts
+
+      - name: Log artifact download
+        run: |
+          ls -alh
+          ls -alh download-artifacts
+    
       - name: Get Tagname
         ## ref: https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/
         ## echo "::set-output name={name}::{value}" (deprecated)
@@ -31,178 +202,18 @@ jobs:
           version: ${{ steps.tag_name.outputs.current_version }}
           path: ./CHANGELOG.md
 
-      - name: Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 🚀 Release
+        uses: softprops/action-gh-release@v1
         with:
-          draft: false
+          draft: true
           prerelease: false
-          release_name: ${{ github.ref }}
+          name: ${{ github.ref_name }}
           tag_name: ${{ github.ref }}
           body: ${{ steps.changelog_reader.outputs.changes }}
-
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-
-  ## ======================================================================================================
-  upload_asset_windows:
-    needs: release
-    name: Upload Asset on Windows
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.1
-        with:
-            vs-version: 17
-
-      - name: Run Buildscript
-        run: ./build-on-windows.bat
-
-      # - name: Print MD5
-      #   run: 
-
-      - name: Install packages
-        run: choco install 7zip.portable
-
-      - name: Run Zip
-        run: 7z a -r lib.zip libsodium/bin
-
-      - name: Upload Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: ./lib.zip
-          asset_name: windows.zip
-          asset_content_type: application/octet-stream
-
-  ## ======================================================================================================
-  upload_asset_linux:
-    needs: release
-    name: Upload Asset on Linux
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Run Buildscript
-        run: sh ./build-on-linux.sh
-
-      # - name: Print MD5
-      #   run: 
-
-      - name: Run Zip
-        run: zip -r lib.zip output/*
-
-      - name: Upload Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: ./lib.zip
-          asset_name: linux.zip
-          asset_content_type: application/octet-stream
-
-  ## ======================================================================================================
-  upload_asset_android:
-    needs: release
-    name: Upload Asset on Linux (Android)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup Android NDK
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r25
-
-      - name: Run Buildscript
-        run: sh ./build-on-linux-android.sh
-
-      # - name: Print MD5
-      #   run: 
-
-      - name: Run Zip
-        run: zip -r lib.zip output/*
-
-      - name: Upload Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: ./lib.zip
-          asset_name: android.zip
-          asset_content_type: application/octet-stream
-
-  ## ======================================================================================================
-  upload_asset_macos:
-    needs: release
-    name: Upload Asset on macOS
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Install Dependency
-        run: brew install coreutils automake
-
-      - name: Run Buildscript
-        run: sh ./build-on-mac.sh
-
-      # - name: Print MD5
-      #   run: 
-
-      - name: Run Zip
-        run: zip -r lib.zip output/*
-
-      - name: Upload Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: ./lib.zip
-          asset_name: macos.zip
-          asset_content_type: application/octet-stream
-  upload_asset_apple_xcframework:
-    needs: release
-    name: Upload Asset on macOS (xcframework)
-    # runs-on: macos-latest
-    runs-on: macos-13
-    steps:
-      - name: Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '15.0'
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install Dependency
-        run: brew install coreutils automake
-
-      - name: Run Buildscript
-        run: sh ./build-on-mac-ios.sh
-
-      # - name: Print MD5
-      #   run: 
-
-      - name: Run Zip
-        run: zip -r lib.zip output/*
-
-      - name: Upload Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.release.outputs.upload_url }}
-          asset_path: ./lib.zip
-          asset_name: xcframework.zip
-          asset_content_type: application/octet-stream
+          fail_on_unmatched_files: true
+          files: |
+            ./download-artifacts/artifact-linux/linux.zip
+            ./download-artifacts/artifact-android/android.zip
+            ./download-artifacts/artifact-windows/windows.zip
+            ./download-artifacts/artifact-macos/macos.zip
+            ./download-artifacts/artifact-apple-xcframework/apple-xcframework.zip
