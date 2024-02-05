@@ -6,46 +6,6 @@ on:
       - '*'
 
 jobs:
-
-  ## ======================================================================================================
-  release:
-    name: Write Release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Get Tagname
-        ## ref: https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/
-        ## echo "::set-output name={name}::{value}" (deprecated)
-        ## echo "{name}={value}" >> $GITHUB_OUTPUT  (updated)
-        id: tag_name
-        run: |
-          echo "current_version"="${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-        shell: bash
-
-      - name: Changelog Reader
-        id: changelog_reader
-        uses: mindsers/changelog-reader-action@v2
-        with:
-          version: ${{ steps.tag_name.outputs.current_version }}
-          path: ./CHANGELOG.md
-
-      - name: Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          draft: false
-          prerelease: false
-          release_name: ${{ github.ref }}
-          tag_name: ${{ github.ref }}
-          body: ${{ steps.changelog_reader.outputs.changes }}
-
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-
   ## ======================================================================================================
   upload_asset_windows:
     needs: release
@@ -206,3 +166,46 @@ jobs:
           asset_path: ./lib.zip
           asset_name: xcframework.zip
           asset_content_type: application/octet-stream
+
+  ## ======================================================================================================
+  release:
+    name: Write Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            CHANGELOG.md
+
+      - name: Get Tagname
+        ## ref: https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/
+        ## echo "::set-output name={name}::{value}" (deprecated)
+        ## echo "{name}={value}" >> $GITHUB_OUTPUT  (updated)
+        id: tag_name
+        run: |
+          echo "current_version"="${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Changelog Reader
+        id: changelog_reader
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          version: ${{ steps.tag_name.outputs.current_version }}
+          path: ./CHANGELOG.md
+
+      - name: Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ github.ref }}
+          tag_name: ${{ github.ref }}
+          body: ${{ steps.changelog_reader.outputs.changes }}
+
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
