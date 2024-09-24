@@ -29,7 +29,7 @@ DIR_LIBSODIUM=${ROOT}/libsodium
 
 
 # [src] libsodium
-git clone -b 1.0.19 --depth 1 https://github.com/jedisct1/libsodium.git $DIR_LIBSODIUM && cd $DIR_LIBSODIUM
+git clone --branch 1.0.20-RELEASE --depth 1 https://github.com/jedisct1/libsodium.git $DIR_LIBSODIUM && cd $DIR_LIBSODIUM
 
 # replace macos.sh with modified_macos.sh
 cp $ROOT/modified_macos.sh $DIR_LIBSODIUM/dist-build/macos.sh

@@ -2,9 +2,9 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [0.0.5-test]
+## [0.0.5]
 
-- test
+- libsodium version 1.0.20-RELEASE
 
 ## [0.0.4]
 

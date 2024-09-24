@@ -30,7 +30,7 @@ DIR_LIBSODIUM=${ROOT}/libsodium
 # [variable]
 
 # [src] libsodium
-git clone -b 1.0.19 --depth 1 https://github.com/jedisct1/libsodium.git && cd libsodium
+git clone --branch 1.0.20-RELEASE --depth 1 https://github.com/jedisct1/libsodium.git && cd libsodium
 
 # configure
 libtoolize --force
