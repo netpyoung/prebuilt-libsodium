@@ -41,12 +41,15 @@ mv $DIR_LIBSODIUM/libsodium-android-armv7-a/lib/libsodium.a $DIR_LIBSODIUM/libso
 
 echo "================================== armv8-a"
 git clean -Xdf
+export LDFLAGS="-Wl,-z,max-page-size=16384" # for 16kb support
+
 ./autogen.sh
 ./dist-build/android-armv8-a.sh || (cat config.log && exit 1)
 mkdir -p $DIR_DEST/Plugins/Android/libs/armeabi-v8a
 ls -al $DIR_LIBSODIUM/libsodium-android-armv8-a+crypto/lib
 mv $DIR_LIBSODIUM/libsodium-android-armv8-a+crypto/lib/libsodium.a $DIR_LIBSODIUM/libsodium-android-armv8-a+crypto/lib/libsodium.so $DIR_DEST/Plugins/Android/libs/armeabi-v8a
 
+unset LDFLAGS
 
 echo "================================== x86"
 git clean -Xdf

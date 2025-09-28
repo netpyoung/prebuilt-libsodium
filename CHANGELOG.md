@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.0.6]
+
+- libsodium version 1.0.20-RELEASE
+- Support 16kb for armeabi-v8a
+
 ## [0.0.5]
 
 - libsodium version 1.0.20-RELEASE
