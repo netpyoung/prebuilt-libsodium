@@ -12,30 +12,25 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v5
 
       - name: Add msbuild to PATH
+        # https://github.com/microsoft/setup-msbuild
         uses: microsoft/setup-msbuild@v2
         with:
-            vs-version: 17
+            vs-version: 17.0
+            # vs-version: '[16.11, 16.12)'
 
       - name: Run Buildscript
-        run: ./build-on-windows.bat
-
-      # - name: Print MD5
-      #   run: 
-
-      - name: Install packages
-        run: choco install 7zip.portable
-
-      - name: Run Zip
-        run: 7z a -r windows.zip libsodium/bin
+        shell: pwsh
+        run: .\build-on-windows.ps1
 
       - name: 🎁⏫ Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: artifact-windows
-          path: windows.zip
+          path: libsodium/bin
           if-no-files-found: error
           retention-days: 1
           compression-level: 0
