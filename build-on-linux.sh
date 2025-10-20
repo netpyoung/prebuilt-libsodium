@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -e
-export LIBSODIUM_FULL_BUILD=true
 
 # [variable]
-ROOT=$(pwd)
-DIR_DEST=${ROOT}/output
-DIR_LIBSODIUM=${ROOT}/libsodium
+export LIBSODIUM_FULL_BUILD=true
+readonly VERSION="1.0.20-RELEASE"
+readonly ROOT=$(pwd)
+readonly DIR_DEST=${ROOT}/output
+readonly DIR_LIBSODIUM=${ROOT}/libsodium
 
 # [for Docker environment]
 # RUN apt-get update && \
@@ -30,7 +31,8 @@ DIR_LIBSODIUM=${ROOT}/libsodium
 # [variable]
 
 # [src] libsodium
-git clone --branch 1.0.20-RELEASE --depth 1 https://github.com/jedisct1/libsodium.git && cd libsodium
+git clone --branch ${VERSION} --depth 1 https://github.com/jedisct1/libsodium.git
+cd libsodium
 
 # configure
 libtoolize --force

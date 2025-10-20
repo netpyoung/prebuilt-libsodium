@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
 set -e
+
+# [variable]
 export LIBSODIUM_FULL_BUILD=true
+readonly VERSION="1.0.20-RELEASE"
+readonly ROOT=$(pwd)
+readonly DIR_DEST=${ROOT}/output
+readonly DIR_LIBSODIUM=${ROOT}/libsodium
+
 # export NDK_PLATFORM="android-19" # FOR PREVENT: 16 is less than minimum platform for arm (19)
 export NDK_PLATFORM="android-21" # after upgrade ndk version, not found: armv7a-linux-androideabi19-clang
 
-# [variable]
-ROOT=$(pwd)
-DIR_DEST=${ROOT}/output
-DIR_LIBSODIUM=${ROOT}/libsodium
-
 # [src] libsodium
-git clone --branch 1.0.20-RELEASE --depth 1 https://github.com/jedisct1/libsodium.git $DIR_LIBSODIUM
+git clone --branch ${VERSION} --depth 1 https://github.com/jedisct1/libsodium.git $DIR_LIBSODIUM
+cd $DIR_LIBSODIUM
 
 # ===========================
 # Android
@@ -28,8 +31,6 @@ git clone --branch 1.0.20-RELEASE --depth 1 https://github.com/jedisct1/libsodiu
 
 
 # [generate]
-cd $DIR_LIBSODIUM
-
 echo "================================== armv7-a"
 git clean -Xdf
 ./autogen.sh

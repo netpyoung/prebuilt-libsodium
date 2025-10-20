@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 set -e
-export LIBSODIUM_FULL_BUILD=true
-
-readonly IOS_MIN_VERSION=6.0
-
 # ===========================
 # macOs, iOs
 # ===========================
@@ -23,13 +19,17 @@ readonly IOS_MIN_VERSION=6.0
 
 
 # [variable]
-ROOT=$(pwd)
-DIR_DEST=${ROOT}/output
-DIR_LIBSODIUM=${ROOT}/libsodium
+export LIBSODIUM_FULL_BUILD=true
+readonly VERSION="1.0.20-RELEASE"
+readonly ROOT=$(pwd)
+readonly DIR_DEST=${ROOT}/output
+readonly DIR_LIBSODIUM=${ROOT}/libsodium
+readonly IOS_MIN_VERSION=6.0
 
 
 # [src] libsodium
-git clone --branch 1.0.20-RELEASE --depth 1 https://github.com/jedisct1/libsodium.git $DIR_LIBSODIUM && cd $DIR_LIBSODIUM
+git clone --branch ${VERSION} --depth 1 https://github.com/jedisct1/libsodium.git $DIR_LIBSODIUM
+cd $DIR_LIBSODIUM
 
 ## override to prevent vision build
 cp $ROOT/modified_apple-xcframework.sh $DIR_LIBSODIUM/dist-build/apple-xcframework.sh
