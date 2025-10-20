@@ -1,23 +1,25 @@
-name: Build asset on Linux
+name: Build asset on macOS
 
 on: [push]
 
 jobs:
-  upload_asset_linux:
-    name: Upload Asset on Linux
-    runs-on: ubuntu-latest
+  upload_asset_macos:
+    name: Upload Asset on macOS
+    runs-on: macos-latest
     steps:
       - name: Checkout
-        # https://github.com/actions/checkout
         uses: actions/checkout@v5
 
+      - name: Install Dependency
+        run: brew install coreutils automake
+
       - name: Run Buildscript
-        run: sh ./build-on-linux.sh
+        run: sh ./build-on-mac.sh
 
       - name: 🎁⏫ Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: artifact-linux
+          name: artifact-macos
           path: output
           if-no-files-found: error
           retention-days: 1

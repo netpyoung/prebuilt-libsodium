@@ -41,22 +41,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v5
 
       - name: Run Buildscript
         run: sh ./build-on-linux.sh
-
-      # - name: Print MD5
-      #   run: 
-
-      - name: Run Zip
-        run: zip -r linux.zip output/*
 
       - name: 🎁⏫ Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: artifact-linux
-          path: linux.zip
+          path: output
           if-no-files-found: error
           retention-days: 1
           compression-level: 0
@@ -67,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Android NDK
         uses: nttld/setup-ndk@v1
@@ -77,17 +72,11 @@ jobs:
       - name: Run Buildscript
         run: sh ./build-on-linux-android.sh
 
-      # - name: Print MD5
-      #   run: 
-
-      - name: Run Zip
-        run: zip -r android.zip output/*
-
       - name: 🎁⏫ Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: artifact-android
-          path: android.zip
+          path: output
           if-no-files-found: error
           retention-days: 1
           compression-level: 0
@@ -99,7 +88,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Dependency
         run: brew install coreutils automake
@@ -132,24 +121,18 @@ jobs:
         with:
           xcode-version: '15.0'
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Install Dependency
         run: brew install coreutils automake
 
       - name: Run Buildscript
         run: sh ./build-on-mac-ios.sh
 
-      # - name: Print MD5
-      #   run: 
-
-      - name: Run Zip
-        run: zip -r apple-xcframework.zip output/*
-
       - name: 🎁⏫ Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: artifact-apple-xcframework
-          path: apple-xcframework.zip
+          path: output
           if-no-files-found: error
           retention-days: 1
           compression-level: 0
@@ -161,7 +144,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -172,9 +155,20 @@ jobs:
           mkdir -p download-artifacts
 
       - name: 🎁⏬ Download Artifact
-        uses: actions/download-artifact@v4
+         # https://github.com/actions/download-artifact
+        uses: actions/download-artifact@v5
         with:
           path: download-artifacts
+
+      - name: 📦 Zip Artifacts
+        run: |
+          cd download-artifacts
+          
+          zip -r android.zip           artifact-android/
+          zip -r linux.zip             artifact-linux/
+          zip -r windows.zip           artifact-windows/
+          zip -r macos.zip             artifact-macos/
+          zip -r apple-xcframework.zip artifact-apple-xcframework/
 
       - name: Log artifact download
         run: |
@@ -207,8 +201,8 @@ jobs:
           body: ${{ steps.changelog_reader.outputs.changes }}
           fail_on_unmatched_files: true
           files: |
-            ./download-artifacts/artifact-linux/linux.zip
-            ./download-artifacts/artifact-android/android.zip
-            ./download-artifacts/artifact-windows/windows.zip
-            ./download-artifacts/artifact-macos/macos.zip
-            ./download-artifacts/artifact-apple-xcframework/apple-xcframework.zip
+            ./download-artifacts/android.zip
+            ./download-artifacts/linux.zip
+            ./download-artifacts/windows.zip
+            ./download-artifacts/macos.zip
+            ./download-artifacts/apple-xcframework.zip

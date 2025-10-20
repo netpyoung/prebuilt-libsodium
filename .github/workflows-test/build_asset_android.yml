@@ -3,18 +3,26 @@ name: Build asset on Linux (Android)
 on: [push]
 
 jobs:
-  build_asset_linux:
-    name: Build asset on Linux
-    runs-on: ubuntu-20.04
+  upload_asset_android:
+    name: Upload Asset on Linux (Android)
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Android NDK
         uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r25c
+          ndk-version: r28c
 
       - name: Run Buildscript
         run: sh ./build-on-linux-android.sh
 
+      - name: 🎁⏫ Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-android
+          path: output
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0

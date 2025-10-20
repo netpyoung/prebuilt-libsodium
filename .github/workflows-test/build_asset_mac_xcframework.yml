@@ -1,9 +1,9 @@
-name: Build asset on macOS (+ iOS)
+name: Build asset on macOS (XCFramework)
 
 on: [push]
 
 jobs:
-  build_asset_mac:
+  upload_asset_apple_xcframework:
     name: Upload Asset on macOS (xcframework)
     # runs-on: macos-latest
     runs-on: macos-13
@@ -13,10 +13,18 @@ jobs:
         with:
           xcode-version: '15.0'
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Install Dependency
         run: brew install coreutils automake
 
       - name: Run Buildscript
         run: sh ./build-on-mac-ios.sh
 
+      - name: 🎁⏫ Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-apple-xcframework
+          path: output
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
