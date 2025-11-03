@@ -1,0 +1,31 @@
+name: Build asset on Linux (wasm)
+
+on: [push]
+
+jobs:
+  ## ======================================================================================================
+  upload_asset_linux_wasm:
+    name: Upload Asset on Linux (wasm)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v5
+
+      # https://github.com/mymindstorm/setup-emsdk
+      - name: Setup emsdk
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          actions-cache-folder: 'emsdk-cache'
+
+      - name: Run Buildscript
+        run: sh ./build-on-linux-wasm.sh
+
+      - name: 🎁⏫ Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-wasm
+          path: output
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0

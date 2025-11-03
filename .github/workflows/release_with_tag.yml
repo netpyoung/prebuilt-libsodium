@@ -111,6 +111,7 @@ jobs:
           retention-days: 1
           compression-level: 0
 
+  ## ======================================================================================================
   upload_asset_apple_xcframework:
     name: Upload Asset on macOS (xcframework)
     # runs-on: macos-latest
@@ -138,8 +139,35 @@ jobs:
           compression-level: 0
 
   ## ======================================================================================================
+  upload_asset_linux_wasm:
+    name: Upload Asset on Linux (wasm)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v5
+
+      # https://github.com/mymindstorm/setup-emsdk
+      - name: Setup emsdk
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          actions-cache-folder: 'emsdk-cache'
+
+      - name: Run Buildscript
+        run: sh ./build-on-linux-wasm.sh
+
+      - name: 🎁⏫ Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-wasm
+          path: output
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+  ## ======================================================================================================
   release:
-    needs: [upload_asset_windows, upload_asset_linux, upload_asset_android, upload_asset_macos, upload_asset_apple_xcframework]
+    needs: [upload_asset_windows, upload_asset_linux, upload_asset_linux_wasm, upload_asset_android, upload_asset_macos, upload_asset_apple_xcframework]
     name: Write Release
     runs-on: ubuntu-latest
     steps:
@@ -165,6 +193,7 @@ jobs:
           cd download-artifacts
           
           zip -r android.zip           artifact-android/
+          zip -r wasm.zip              artifact-wasm/
           zip -r linux.zip             artifact-linux/
           zip -r windows.zip           artifact-windows/
           zip -r macos.zip             artifact-macos/
@@ -202,6 +231,7 @@ jobs:
           fail_on_unmatched_files: true
           files: |
             ./download-artifacts/android.zip
+            ./download-artifacts/wasm.zip
             ./download-artifacts/linux.zip
             ./download-artifacts/windows.zip
             ./download-artifacts/macos.zip
