@@ -21,6 +21,7 @@ set -e
 
 # [variable]
 export LIBSODIUM_FULL_BUILD=true
+readonly VERSION="1.0.20-RELEASE"
 readonly ROOT=$(pwd)
 readonly DIR_DEST=${ROOT}/output
 readonly DIR_LIBSODIUM=${ROOT}/libsodium
