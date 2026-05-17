@@ -21,7 +21,7 @@ set -e
 
 # [variable]
 export LIBSODIUM_FULL_BUILD=true
-readonly VERSION="1.0.20-RELEASE"
+readonly VERSION="1.0.22-RELEASE"
 readonly ROOT=$(pwd)
 readonly DIR_DEST=${ROOT}/output
 readonly DIR_LIBSODIUM=${ROOT}/libsodium
@@ -32,7 +32,8 @@ git clone --branch ${VERSION} --depth 1 https://github.com/jedisct1/libsodium.gi
 cd $DIR_LIBSODIUM
 
 # replace macos.sh with modified_macos.sh
-cp $ROOT/modified_macos.sh $DIR_LIBSODIUM/dist-build/macos.sh
+# cp $ROOT/modified_macos.sh $DIR_LIBSODIUM/dist-build/macos.sh
+export ARCHFLAGS="-arch x86_64 -arch arm64"
 ./autogen.sh
 ./dist-build/macos.sh
 

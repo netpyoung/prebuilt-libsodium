@@ -20,7 +20,7 @@ set -e
 
 # [variable]
 export LIBSODIUM_FULL_BUILD=true
-readonly VERSION="1.0.20-RELEASE"
+readonly VERSION="1.0.22-RELEASE"
 readonly ROOT=$(pwd)
 readonly DIR_DEST=${ROOT}/output
 readonly DIR_LIBSODIUM=${ROOT}/libsodium
@@ -32,7 +32,7 @@ git clone --branch ${VERSION} --depth 1 https://github.com/jedisct1/libsodium.gi
 cd $DIR_LIBSODIUM
 
 ## override to prevent vision build
-cp $ROOT/modified_apple-xcframework.sh $DIR_LIBSODIUM/dist-build/apple-xcframework.sh
+# cp $ROOT/modified_apple-xcframework.sh $DIR_LIBSODIUM/dist-build/apple-xcframework.sh
 
 # [generate]
 ## generate for ios

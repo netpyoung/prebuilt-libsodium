@@ -1,0 +1,178 @@
+name: Test
+
+on: [push]
+
+jobs:
+  ## ======================================================================================================
+  upload_asset_windows:
+    if: false
+    name: Upload Asset on Windows
+    runs-on: windows-2025-vs2026 # https://github.blog/changelog/2026-05-14-github-actions-upcoming-image-migrations/
+    steps:
+      - name: Checkout
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v6
+
+      - name: Add msbuild to PATH
+        # https://github.com/microsoft/setup-msbuild
+        uses: microsoft/setup-msbuild@v2
+        with:
+            vs-version: 17.0
+            # vs-version: '[16.11, 16.12)'
+
+      - name: Run Buildscript
+        shell: pwsh
+        run: .\build-on-windows.ps1
+
+      - name: 🎁⏫ Upload Artifact
+        # https://github.com/actions/upload-artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: artifact-windows
+          path: libsodium/bin
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+  ## ======================================================================================================
+  upload_asset_linux:
+    if: false
+    name: Upload Asset on Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v6
+
+      - name: Run Buildscript
+        run: sh ./build-on-linux.sh
+
+      - name: 🎁⏫ Upload Artifact
+        # https://github.com/actions/upload-artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: artifact-linux
+          path: output
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+  ## ======================================================================================================
+  upload_asset_android:
+    if: false
+    name: Upload Asset on Linux (Android)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r28c
+
+      - name: Run Buildscript
+        run: sh ./build-on-linux-android.sh
+
+      - name: 🎁⏫ Upload Artifact
+        # https://github.com/actions/upload-artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: artifact-android
+          path: output
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+
+  ## ======================================================================================================
+  upload_asset_macos:
+    # if: false
+    name: Upload Asset on macOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v6
+
+      - name: Install Dependency
+        run: brew install coreutils automake
+
+      - name: Run Buildscript
+        run: sh ./build-on-mac.sh
+
+      # - name: Print MD5
+      #   run: 
+
+      - name: Run Zip
+        run: zip -r macos.zip output/*
+
+      - name: 🎁⏫ Upload Artifact
+        # https://github.com/actions/upload-artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: artifact-macos
+          path: macos.zip
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+  ## ======================================================================================================
+  upload_asset_apple_xcframework:
+    name: Upload Asset on macOS (xcframework)
+    # runs-on: macos-latest
+    runs-on: macos-latest
+    steps:
+      - name: Xcode
+        # https://github.com/maxim-lobanov/setup-xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26.3.0'
+      - name: Checkout
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v6
+      - name: Install Dependency
+        run: brew install coreutils automake
+
+      - name: Run Buildscript
+        run: sh ./build-on-mac-ios.sh
+
+      - name: 🎁⏫ Upload Artifact
+        # https://github.com/actions/upload-artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: artifact-apple-xcframework
+          path: output
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+  ## ======================================================================================================
+  upload_asset_linux_wasm:
+    if: false
+    name: Upload Asset on Linux (wasm)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v6
+
+      # https://github.com/mymindstorm/setup-emsdk
+      - name: Setup emsdk
+        uses: mymindstorm/setup-emsdk@v16
+        with:
+          actions-cache-folder: 'emsdk-cache'
+
+      - name: Run Buildscript
+        run: sh ./build-on-linux-wasm.sh
+
+      - name: 🎁⏫ Upload Artifact
+        # https://github.com/actions/upload-artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: artifact-wasm
+          path: output
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0

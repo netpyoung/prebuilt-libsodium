@@ -1,9 +1,9 @@
 # [variable]
-$VERSION = "1.0.20-RELEASE"
+$VERSION = "1.0.22-RELEASE"
 
 git clone --branch $VERSION --depth 1 https://github.com/jedisct1/libsodium.git
 
-$solution = "libsodium\builds\msvc\vs2022\libsodium.sln"
+$solution = "libsodium\builds\msvc\vs2026\libsodium.sln"
 
 New-Item -ItemType Directory -Path "libsodium\bin" -Force | Out-Null
 $log = "libsodium\bin\build.log"
